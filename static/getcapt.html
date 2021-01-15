@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<img id="capt" src="" /><br/>
+<input id="captvalue" placeholder="请输入验证码" /><br/>
+<input type="button" name="save" value="提交" onclick="submit()" />
+<script>
+
+    var curCaptId = "";
+    //得到图形验证码和id
+    $.ajax({
+        type: "GET",
+        url: "/id/getone",
+        data: {},
+        dataType: "JSON",
+        success: function(result) {
+            curCaptId = result.data.id;
+            document.getElementById("capt").src=result.data.base_64_blob;
+        }
+    });
+
+    //提交验证码和id
+    function submit() {
+        var capt = document.getElementById("captvalue").value;
+        var postdata = {
+            "id":curCaptId,
+            "capt":capt
+        };
+        $.ajax({
+            type: "POST",
+            url: "/id/verify",
+            data: postdata,
+            dataType: "JSON",
+            success: function(result) {
+                if (result.code == 0){
+                    alert("验证成功");
+                } else {
+                    alert("验证错误:"+result.msg);
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
